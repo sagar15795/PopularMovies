@@ -36,7 +36,6 @@ public class GridRecyclerAdapter extends RecyclerView.Adapter<GridRecyclerAdapte
                     public void onSuccess() {
 
                     }
-
                     @Override
                     public void onError() {
                         // Try again online if cache failed
