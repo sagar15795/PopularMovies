@@ -1,12 +1,15 @@
 package com.lusifer.popularmovies.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoviePojo {
+public class MoviePojo implements Parcelable {
 
     @SerializedName("page")
     @Expose
@@ -77,4 +80,31 @@ public class MoviePojo {
         this.totalPages = totalPages;
     }
 
+    @Override
+    public int describeContents() { return 0; }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.page);
+        dest.writeTypedList(results);
+        dest.writeValue(this.totalResults);
+        dest.writeValue(this.totalPages);
+    }
+
+    public MoviePojo() {}
+
+    protected MoviePojo(Parcel in) {
+        this.page = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.results = in.createTypedArrayList(Result.CREATOR);
+        this.totalResults = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.totalPages = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<MoviePojo> CREATOR = new Parcelable.Creator<MoviePojo>() {
+        @Override
+        public MoviePojo createFromParcel(Parcel source) {return new MoviePojo(source);}
+
+        @Override
+        public MoviePojo[] newArray(int size) {return new MoviePojo[size];}
+    };
 }

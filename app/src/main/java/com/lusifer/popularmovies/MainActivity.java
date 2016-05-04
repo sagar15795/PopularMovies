@@ -46,43 +46,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
         restClient = new RestAPIClient();
-        SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String unitType = sharedPrefs.getString(
-                getString(R.string.pref_units_key),
-                getString(R.string.pref_units_popular));
 
-        moviePojoCall = restClient.getMovieService().getMovies(unitType,getString(R.string.api_key));
+        getMovieDetail();
 
-        moviePojoCall.enqueue(new Callback<MoviePojo>() {
-            @Override
-            public void onResponse(Call<MoviePojo> call, Response<MoviePojo> response) {
-                    resultArrayList.clear();
-                for (int i = 0 ; i < response.body().getResults().size() ; i++) {
-                    resultArrayList.add(response.body().getResults().get(i));
-                }
-                prepareMovieData();
-                mAdapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onFailure(Call<MoviePojo> call, Throwable t) {
-
-                Toast.makeText(getApplicationContext(), "Server Error", Toast.LENGTH_SHORT).show();
-            }
-        });
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
 
                 Result result = resultArrayList.get(position);
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra(getString(R.string.extra_title), result.getTitle());
-                intent.putExtra(getString(R.string.extra_overview), result.getOverview());
-                intent.putExtra(getString(R.string.extra_imageurl), result.getPosterPath());
-                intent.putExtra(getString(R.string.extra_rating), result.getVoteAverage());
-                intent.putExtra(getString(R.string.extra_releasedate),result.getReleaseDate());
+                intent.putExtra(getString(R.string.extra_detail),result);
                 startActivity(intent);
             }
 
@@ -100,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
         imageUrlList.clear();
         mAdapter.notifyDataSetChanged();
 
+        getMovieDetail();
+    }
+
+    private void getMovieDetail() {
 
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -136,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -157,54 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public interface ClickListener {
-        void onClick(View view, int position);
 
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private MainActivity.ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final MainActivity.ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
-    }
 
 
 }
