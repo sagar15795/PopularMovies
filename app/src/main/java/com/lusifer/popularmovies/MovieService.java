@@ -13,7 +13,7 @@ public interface MovieService {
     Call<MoviePojo> getMovies(@Path("cat") String cat ,@Query("api_key") String x);
 
     @GET("/3/movie/{id}/videos")
-    Call<VideoPojo> getTrailers(@Path("id") String id , @Query("api_key") String x);
+    Call<VideoPojo> getTrailers(@Path("id") int id , @Query("api_key") String x);
 
 
 
