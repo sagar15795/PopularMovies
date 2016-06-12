@@ -1,6 +1,7 @@
 package com.lusifer.popularmovies;
 
 import com.lusifer.popularmovies.Model.MoviePojo;
+import com.lusifer.popularmovies.Model.ReviewsDetail;
 import com.lusifer.popularmovies.Model.VideoPojo;
 
 import retrofit2.Call;
@@ -15,6 +16,8 @@ public interface MovieService {
     @GET("/3/movie/{id}/videos")
     Call<VideoPojo> getTrailers(@Path("id") int id , @Query("api_key") String x);
 
+    @GET("/3/movie/{id}/reviews")
+    Call<ReviewsDetail> getReviews(@Path("id") int id ,@Query("page") int page, @Query("api_key") String x);
 
 
 }

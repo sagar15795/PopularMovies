@@ -3,6 +3,7 @@ package com.lusifer.popularmovies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -88,7 +89,23 @@ public class DetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         restClient = new RestAPIClient();
         getTrailer();
+        try
+        {
+            FloatingActionButton review=(FloatingActionButton)findViewById(R.id.review);
+            review.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+;
+                    Intent intent = new Intent(DetailActivity.this, ReviewActivity.class);
+                    intent.putExtra(getString(R.string.extra_detail), detail);
+                    startActivity(intent);
 
+                }
+            });
+
+        }catch (NullPointerException e)
+        {
+        }
     }
 
     public void getTrailer() {
