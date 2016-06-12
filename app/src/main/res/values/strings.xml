@@ -14,5 +14,6 @@
     <string name="overview">Overview</string>
     <string name="image_baseurl">http://image.tmdb.org/t/p/w500</string>
     <string name="extra_detail">DetailMovie</string>
-    <string name="api_key">Enter API KEY HERE</string>
+    <string name="trailer">Trailer</string>
+    <!--<string name="api_key">Enter API KEY HERE</string>-->
 </resources>

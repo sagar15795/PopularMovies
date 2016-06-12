@@ -76,8 +76,23 @@
         android:text="Overview Detail"
         android:textSize="14sp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvTrailer"
+    <TextView
+        android:id="@+id/tvTrailer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOverviewDetail"
+        android:layout_marginTop="20dp"
+        android:text="@string/trailer"
+        android:textSize="18sp" />
+    <ProgressBar
+        android:id="@+id/pbTrailer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tvTrailer"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvTrailer" />
 </RelativeLayout>
