@@ -16,7 +16,7 @@ public class MoviePojo implements Parcelable {
     private Integer page;
     @SerializedName("results")
     @Expose
-    private List<Result> results = new ArrayList<Result>();
+    private List<MovieResult> movieResults = new ArrayList<MovieResult>();
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
@@ -41,15 +41,15 @@ public class MoviePojo implements Parcelable {
     /**
      * @return The results
      */
-    public List<Result> getResults() {
-        return results;
+    public List<MovieResult> getMovieResults() {
+        return movieResults;
     }
 
     /**
-     * @param results The results
+     * @param movieResults The results
      */
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setMovieResults(List<MovieResult> movieResults) {
+        this.movieResults = movieResults;
     }
 
     /**
@@ -86,7 +86,7 @@ public class MoviePojo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.page);
-        dest.writeTypedList(results);
+        dest.writeTypedList(movieResults);
         dest.writeValue(this.totalResults);
         dest.writeValue(this.totalPages);
     }
@@ -95,7 +95,7 @@ public class MoviePojo implements Parcelable {
 
     protected MoviePojo(Parcel in) {
         this.page = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.results = in.createTypedArrayList(Result.CREATOR);
+        this.movieResults = in.createTypedArrayList(MovieResult.CREATOR);
         this.totalResults = (Integer) in.readValue(Integer.class.getClassLoader());
         this.totalPages = (Integer) in.readValue(Integer.class.getClassLoader());
     }

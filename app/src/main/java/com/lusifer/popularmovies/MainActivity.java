@@ -1,6 +1,5 @@
 package com.lusifer.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,15 +9,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.lusifer.popularmovies.Model.MoviePojo;
-import com.lusifer.popularmovies.Model.Result;
+import com.lusifer.popularmovies.Model.MovieResult;
 
 import java.util.ArrayList;
 
@@ -30,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> imageUrlList = new ArrayList<>();
     private RecyclerView recyclerView;
     private GridRecyclerAdapter mAdapter;
-    private ArrayList<Result> resultArrayList = new ArrayList<>();
+    private ArrayList<MovieResult> movieResultArrayList = new ArrayList<>();
     private Call<MoviePojo> moviePojoCall;
     private RestAPIClient restClient;
     @Override
@@ -53,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view, int position) {
 
-                Result result = resultArrayList.get(position);
+                MovieResult movieResult = movieResultArrayList.get(position);
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra(getString(R.string.extra_detail),result);
+                intent.putExtra(getString(R.string.extra_detail), movieResult);
                 startActivity(intent);
             }
 
@@ -89,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
         moviePojoCall.enqueue(new Callback<MoviePojo>() {
             @Override
             public void onResponse(Call<MoviePojo> call, Response<MoviePojo> response) {
-                resultArrayList.clear();
-                for (int i = 0 ; i < response.body().getResults().size() ; i++) {
-                    resultArrayList.add(response.body().getResults().get(i));
+                movieResultArrayList.clear();
+                for (int i = 0; i < response.body().getMovieResults().size() ; i++) {
+                    movieResultArrayList.add(response.body().getMovieResults().get(i));
                 }
                 prepareMovieData();
                 mAdapter.notifyDataSetChanged();
@@ -131,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareMovieData() {
         imageUrlList.clear();
-        for (int i = 0 ; i < resultArrayList.size() ; i++) {
-            imageUrlList.add("http://image.tmdb.org/t/p/w500" + resultArrayList.get(i).getPosterPath());
+        for (int i = 0; i < movieResultArrayList.size() ; i++) {
+            imageUrlList.add("http://image.tmdb.org/t/p/w500" + movieResultArrayList.get(i).getPosterPath());
         }
     }
 

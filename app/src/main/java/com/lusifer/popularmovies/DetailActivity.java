@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.lusifer.popularmovies.Model.Result;
+import com.lusifer.popularmovies.Model.MovieResult;
 import com.lusifer.popularmovies.Model.VideoPojo;
 import com.lusifer.popularmovies.Model.VideoResult;
 import com.squareup.picasso.Callback;
@@ -41,7 +41,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         intent = getIntent();
         videoResults=new ArrayList<>();
-        final Result detail = (Result) intent.getParcelableExtra("DetailMovie");
+        final MovieResult detail = (MovieResult) intent.getParcelableExtra("DetailMovie");
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         bar=(ProgressBar)findViewById(R.id.pbTrailer);
