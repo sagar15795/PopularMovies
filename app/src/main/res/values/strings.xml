@@ -16,5 +16,7 @@
     <string name="extra_detail">DetailMovie</string>
     <string name="trailer">Trailer</string>
     <string name="title_activity_review">ReviewActivity</string>
+    <string name="title_activity_favourite">Favourite Movies</string>
+    <string name="favourites">Favourites</string>
     <!--<string name="api_key">Enter API KEY HERE</string>-->
 </resources>

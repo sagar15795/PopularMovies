@@ -131,11 +131,7 @@ public class DetailActivity extends AppCompatActivity {
                     movieResult.save();
                     fab.setImageResource(R.drawable.ic_favorite_black_24dp);
                 } else {
-//                    List<MovieResultSugar> listQuery = Query.list();
-//                    if (listQuery.size() != 0) {
-//                        MovieResultSugar movieResult = MovieResultSugar.findById(MovieResultSugar.class, listQuery.get(0).getId());
-//                        movieResult.delete();
-//                    }
+
                     MovieResultSugar.deleteAll(MovieResultSugar.class, "id_Movie_Result = ?", detail.getId()+"");
                     fab.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                 }
@@ -162,5 +158,13 @@ public class DetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(!videoPojoCall.isCanceled()){
+            videoPojoCall.cancel();
+        }
     }
 }

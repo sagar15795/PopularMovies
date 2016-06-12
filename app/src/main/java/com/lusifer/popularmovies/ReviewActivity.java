@@ -50,7 +50,7 @@ public class ReviewActivity extends AppCompatActivity {
         adapter=new ReviewAdapter(reviewResultList);
         recyclerView.setAdapter(adapter);
         restClient = new RestAPIClient();
-        getTrailer(page);
+        getReview(page);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -68,13 +68,13 @@ public class ReviewActivity extends AppCompatActivity {
             public void onLoadMore(int current_page) {
                 if(page<total_no) {
                     bar.setVisibility(View.VISIBLE);
-                    getTrailer(++page);
+                    getReview(++page);
                 }
             }
         });
     }
 
-    public void getTrailer(int page) {
+    public void getReview(int page) {
         reviewsDetailCall = restClient.getMovieService().getReviews(detail.getId(),page,getString(R.string.api_key));
         reviewsDetailCall.enqueue(new retrofit2.Callback<ReviewsDetail>() {
             @Override
