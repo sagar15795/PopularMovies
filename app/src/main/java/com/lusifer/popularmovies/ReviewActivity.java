@@ -8,7 +8,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ProgressBar;
 
+import com.lusifer.popularmovies.Model.MovieResult;
 import com.lusifer.popularmovies.Model.ReviewResult;
 import com.lusifer.popularmovies.Model.ReviewsDetail;
 
@@ -23,7 +25,10 @@ public class ReviewActivity extends AppCompatActivity {
     private RestAPIClient restClient;
     private Call<ReviewsDetail> reviewsDetailCall;
     private ReviewAdapter adapter;
-
+    MovieResult detail;
+    int page=1;
+    int total_no;
+    private ProgressBar bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,12 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        Intent intent = getIntent();
+        bar=(ProgressBar)findViewById(R.id.pbshow);
+        bar.setVisibility(View.VISIBLE);
+        detail = (MovieResult) intent.getParcelableExtra("DetailMovie");
         reviewResultList=new ArrayList<>();
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.rvReview);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
@@ -40,7 +50,7 @@ public class ReviewActivity extends AppCompatActivity {
         adapter=new ReviewAdapter(reviewResultList);
         recyclerView.setAdapter(adapter);
         restClient = new RestAPIClient();
-        getTrailer();
+        getTrailer(page);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -53,19 +63,29 @@ public class ReviewActivity extends AppCompatActivity {
 
             }
         }));
+        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int current_page) {
+                if(page<total_no) {
+                    bar.setVisibility(View.VISIBLE);
+                    getTrailer(++page);
+                }
+            }
+        });
     }
 
-    public void getTrailer() {
-        reviewsDetailCall = restClient.getMovieService().getReviews(293660,1,getString(R.string.api_key));
+    public void getTrailer(int page) {
+        reviewsDetailCall = restClient.getMovieService().getReviews(detail.getId(),page,getString(R.string.api_key));
         reviewsDetailCall.enqueue(new retrofit2.Callback<ReviewsDetail>() {
             @Override
             public void onResponse(Call<ReviewsDetail> call, Response<ReviewsDetail> response) {
-                reviewResultList.clear();
+                total_no=response.body().getTotalPages();
+
                 for (int i = 0; i < response.body().getTotalResults(); i++) {
                     reviewResultList.add(response.body().getReviewResults().get(i));
                 }
                 adapter.notifyDataSetChanged();
-//                bar.setVisibility(View.GONE);
+                bar.setVisibility(View.GONE);
             }
 
             @Override

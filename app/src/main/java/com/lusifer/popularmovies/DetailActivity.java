@@ -15,8 +15,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.lusifer.popularmovies.Model.MovieResult;
+import com.lusifer.popularmovies.Model.MovieResultSugar;
 import com.lusifer.popularmovies.Model.VideoPojo;
 import com.lusifer.popularmovies.Model.VideoResult;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -28,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity {
-    private CollapsingToolbarLayout collapsingToolbarLayout ;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     Intent intent;
     private Call<VideoPojo> videoPojoCall;
     private RestAPIClient restClient;
@@ -37,20 +40,32 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
     private ProgressBar bar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         intent = getIntent();
-        videoResults=new ArrayList<>();
+        videoResults = new ArrayList<>();
         final MovieResult detail = (MovieResult) intent.getParcelableExtra("DetailMovie");
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        bar=(ProgressBar)findViewById(R.id.pbTrailer);
+        bar = (ProgressBar) findViewById(R.id.pbTrailer);
         bar.setVisibility(View.VISIBLE);
         setSupportActionBar(toolbar);
+        Select Query = Select.from(MovieResultSugar.class)
+                .where(Condition.prop("id_Movie_Result").eq(detail.getId()));
+        long numberQuery = Query.count();
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fav);
+
+        if (numberQuery == 0) {
+            fab.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        } else {
+            fab.setImageResource(R.drawable.ic_favorite_black_24dp);
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setTitle(detail.getTitle());
+        String title = detail.getTitle();
+        collapsingToolbarLayout.setTitle(title);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
         TextView tvOverview = (TextView) findViewById(R.id.tvOverviewDetail);
@@ -78,24 +93,22 @@ public class DetailActivity extends AppCompatActivity {
         String rating = String.valueOf(voting_avg) + "/10";
         ((RatingBar) findViewById(R.id.ratingBar)).setRating(voting_avg);
         ratingText.setText(rating);
-        id=detail.getId();
-        recyclerView=(RecyclerView)findViewById(R.id.list);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        id = detail.getId();
+        recyclerView = (RecyclerView) findViewById(R.id.list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter=new RecyclerAdapter(this,videoResults);
+        adapter = new RecyclerAdapter(this, videoResults);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setFocusable(false);
         recyclerView.setAdapter(adapter);
         restClient = new RestAPIClient();
         getTrailer();
-        try
-        {
-            FloatingActionButton review=(FloatingActionButton)findViewById(R.id.review);
+        try {
+            FloatingActionButton review = (FloatingActionButton) findViewById(R.id.review);
             review.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-;
                     Intent intent = new Intent(DetailActivity.this, ReviewActivity.class);
                     intent.putExtra(getString(R.string.extra_detail), detail);
                     startActivity(intent);
@@ -103,13 +116,36 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
 
-        }catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
         }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Select Query = Select.from(MovieResultSugar.class)
+                        .where(Condition.prop("id_Movie_Result").eq(detail.getId())).limit("1");
+                long numberQuery = Query.count();
+
+                if (numberQuery == 0) {
+                    MovieResultSugar movieResult = new MovieResultSugar(detail.getPosterPath(), detail.getAdult(), detail.getOverview(), detail.getReleaseDate(), detail.getGenreIds(), detail.getId(), detail.getOriginalTitle(), detail.getOriginalLanguage(), detail.getTitle(), detail.getBackdropPath(), detail.getPopularity(), detail.getVoteCount(), detail.getVideo(), detail.getVoteAverage());
+                    movieResult.save();
+                    fab.setImageResource(R.drawable.ic_favorite_black_24dp);
+                } else {
+//                    List<MovieResultSugar> listQuery = Query.list();
+//                    if (listQuery.size() != 0) {
+//                        MovieResultSugar movieResult = MovieResultSugar.findById(MovieResultSugar.class, listQuery.get(0).getId());
+//                        movieResult.delete();
+//                    }
+                    MovieResultSugar.deleteAll(MovieResultSugar.class, "id_Movie_Result = ?", detail.getId()+"");
+                    fab.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                }
+
+            }
+        });
     }
 
     public void getTrailer() {
-        videoPojoCall = restClient.getMovieService().getTrailers(id,getString(R.string.api_key));
+        videoPojoCall = restClient.getMovieService().getTrailers(id, getString(R.string.api_key));
         videoPojoCall.enqueue(new retrofit2.Callback<VideoPojo>() {
             @Override
             public void onResponse(Call<VideoPojo> call, Response<VideoPojo> response) {
