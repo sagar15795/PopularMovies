@@ -1,22 +1,23 @@
 package com.lusifer.popularmovies;
 
-import android.content.Intent;
+import com.lusifer.popularmovies.Model.MoviePojo;
+import com.lusifer.popularmovies.Model.MovieResult;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.lusifer.popularmovies.Model.MoviePojo;
-import com.lusifer.popularmovies.Model.MovieResult;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,8 @@ public class MainFragment extends Fragment {
 
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         prepareMovieData();
         mAdapter = new GridRecyclerAdapter(imageUrlList, getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
@@ -54,9 +57,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view, int position) {
 
                 MovieResult movieResult = movieResultArrayList.get(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(getString(R.string.extra_detail), movieResult);
-                startActivity(intent);
+                ((DetailFragmentCallback) getActivity()).onItemSelected(movieResult);
             }
 
             @Override

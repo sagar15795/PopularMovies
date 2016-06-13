@@ -1,5 +1,7 @@
 package com.lusifer.popularmovies;
 
+import com.lusifer.popularmovies.Model.MovieResult;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,18 +11,27 @@ import android.view.MenuItem;
 /**
  * Created by lusifer on 12/6/16.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DetailFragmentCallback{
 
+
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container,new MainFragment())
                     .commit();
+        if (findViewById(R.id.details) != null) {
+
+            mTwoPane = true;
+
+        } else {
+            mTwoPane = false;
         }
+
     }
 
     @Override
@@ -49,4 +60,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onItemSelected(MovieResult movie) {
+        if (mTwoPane) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.details, DetailFragment.newInstance(movie))
+                    .commit();
+        } else {
+            Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+            intent.putExtra(getString(R.string.extra_detail), movie);
+            startActivity(intent);
+        }
+    }
 }
