@@ -18,5 +18,6 @@
     <string name="title_activity_review">ReviewActivity</string>
     <string name="title_activity_favourite">Favourite Movies</string>
     <string name="favourites">Favourites</string>
-    <!--<string name="api_key">Enter API KEY HERE</string>-->
+    <string name="api_key">themoviedb api key</string>
+    <string name="google_api_key">Google API KEY</string>
 </resources>
