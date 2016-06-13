@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.lusifer.popularmovies.DetailActivity">
+    tools:context=".DetailFragment">
 
 
     <android.support.design.widget.AppBarLayout

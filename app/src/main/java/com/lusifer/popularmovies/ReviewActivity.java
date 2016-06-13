@@ -36,8 +36,6 @@ public class ReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_review);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         Intent intent = getIntent();
         bar=(ProgressBar)findViewById(R.id.pbshow);
         bar.setVisibility(View.VISIBLE);
